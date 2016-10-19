@@ -7,6 +7,7 @@
  * gsc535
  * 16475
  * Slip days used: <0>
+ * Git URL: https://github.com/mvandinh/mv24772_gsc535_Lab4
  * Fall 2016
  */
 
@@ -74,19 +75,19 @@ public class Main {
         	Arrays.fill(splitInput, null);
         	System.out.print("critters>");
             splitInput = kb.nextLine().split("\\s+");
-    		if (splitInput[0].equals("show")) {
+    		if (splitInput[0].equals("show")) {		// show - display the world
     			Critter.displayWorld();
     		}
-    		else if (splitInput[0].equals("step")) {
+    		else if (splitInput[0].equals("step")) {	// step - execute time step(s)
     			int num_steps = 1;
     			if (!splitInput[1].equals(null)) {
     				num_steps = Integer.parseInt(splitInput[1]);
     			}
     			for (int i = 0; i < num_steps; i++) {
-    				
+    				Critter.worldTimeStep();
     			}
     		}
-    		else if (splitInput[0].equals("seed")) {
+    		else if (splitInput[0].equals("seed")) {	// seed - set the seed
     			if (!splitInput[1].equals(null)) {
     				Critter.setSeed(Integer.parseInt(splitInput[1]));
     			}
@@ -94,7 +95,7 @@ public class Main {
     				
     			}
     		}
-    		else if (splitInput[0].equals("make")) {
+    		else if (splitInput[0].equals("make")) {	// make - make critter(s)
     			int num_make = 1;
     			if (!splitInput[1].equals(null)) {
     				if (!splitInput[2].equals(null)) {
@@ -108,7 +109,7 @@ public class Main {
     				
     			}
     		}
-    		else if (splitInput[0].equals("stats")) {
+    		else if (splitInput[0].equals("stats")) {	// stats - display stats
     			if (!splitInput[1].equals(null)) {
     				// Critter.getInstances(critter_class_name);
     				// critter_class_name.runStats();
@@ -120,7 +121,7 @@ public class Main {
     		else {	// INVALID INPUT
     			
     		}
-        } while (!splitInput[0].equals("quit"));
+        } while (!splitInput[0].equals("quit"));	// quit - terminate the program
         System.out.println("GLHF");
         
         /* Write your code above */

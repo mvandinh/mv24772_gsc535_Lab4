@@ -7,6 +7,7 @@
  * gsc535
  * 16475
  * Slip days used: <0>
+ * Git URL: https://github.com/mvandinh/mv24772_gsc535_Lab4
  * Fall 2016
  */
 package assignment4;
@@ -49,10 +50,71 @@ public abstract class Critter {
 	private int y_coord;
 	
 	protected final void walk(int direction) {
+		if (direction == 0) {
+			x_coord += 1;
+		}
+		else if(direction == 1) {
+			x_coord += 1;
+			y_coord += 1;
+		}
+		else if(direction == 2) {
+			y_coord += 1;
+		}
+		else if(direction == 3) {
+			x_coord -= 1;
+			y_coord += 1;
+		}
+		else if(direction == 4) {
+			x_coord -= 1;
+		}
+		else if(direction == 5) {
+			x_coord -= 1;
+			y_coord -= 1;
+		}
+		else if(direction == 6) {
+			y_coord -= 1;
+		}
+		else if(direction == 7) {
+			x_coord += 1;
+			y_coord -= 1;
+		}
+		x_coord %= Params.world_width;
+		y_coord %= Params.world_height;
+		energy -= Params.walk_energy_cost;
 	}
 	
 	protected final void run(int direction) {
-		
+		if (direction == 0) {
+			x_coord += 2;
+		}
+		else if(direction == 1) {
+			x_coord += 2;
+			y_coord += 2;
+		}
+		else if(direction == 2) {
+			y_coord += 2;
+		}
+		else if(direction == 3) {
+			x_coord -= 2;
+			y_coord += 2;
+		}
+		else if(direction == 4) {
+			x_coord -= 2;
+		}
+		else if(direction == 5) {
+			x_coord -= 2;
+			y_coord -= 2;
+		}
+		else if(direction == 6) {
+			y_coord -= 2;
+		}
+		else if(direction == 7) {
+			x_coord += 2;
+			y_coord -= 2;
+		}
+		x_coord %= Params.world_width;
+		y_coord %= Params.world_height;
+		energy -= Params.run_energy_cost;
 	}
 	
 	protected final void reproduce(Critter offspring, int direction) {
