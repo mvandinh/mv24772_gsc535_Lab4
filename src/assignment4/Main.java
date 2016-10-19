@@ -11,6 +11,7 @@
  */
 
 package assignment4; // cannot be in default package
+import java.util.Arrays;
 import java.util.Scanner;
 import java.io.*;
 
@@ -68,7 +69,58 @@ public class Main {
 
         /* Do not alter the code above for your submission. */
         /* Write your code below. */
-        
+        String[] splitInput = null;
+        do {
+        	Arrays.fill(splitInput, null);
+        	System.out.print("critters>");
+            splitInput = kb.nextLine().split("\\s+");
+    		if (splitInput[0].equals("show")) {
+    			Critter.displayWorld();
+    		}
+    		else if (splitInput[0].equals("step")) {
+    			int num_steps = 1;
+    			if (!splitInput[1].equals(null)) {
+    				num_steps = Integer.parseInt(splitInput[1]);
+    			}
+    			for (int i = 0; i < num_steps; i++) {
+    				
+    			}
+    		}
+    		else if (splitInput[0].equals("seed")) {
+    			if (!splitInput[1].equals(null)) {
+    				Critter.setSeed(Integer.parseInt(splitInput[1]));
+    			}
+    			else {	// INVALID INPUT
+    				
+    			}
+    		}
+    		else if (splitInput[0].equals("make")) {
+    			int num_make = 1;
+    			if (!splitInput[1].equals(null)) {
+    				if (!splitInput[2].equals(null)) {
+    					num_make = Integer.parseInt(splitInput[2]);
+    				}
+    				for (int i = 0; i < num_make; i++) {
+    					// Critter.makeCritter(critter_class_name);
+    				}
+    			}
+    			else {	// INVALID INPUT
+    				
+    			}
+    		}
+    		else if (splitInput[0].equals("stats")) {
+    			if (!splitInput[1].equals(null)) {
+    				// Critter.getInstances(critter_class_name);
+    				// critter_class_name.runStats();
+    			}
+    			else {	// INVALID INPUT
+    				
+    			}
+    		}
+    		else {	// INVALID INPUT
+    			
+    		}
+        } while (!splitInput[0].equals("quit"));
         System.out.println("GLHF");
         
         /* Write your code above */
