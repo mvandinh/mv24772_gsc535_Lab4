@@ -74,7 +74,7 @@ public abstract class Critter {
 		else if(direction == 6) {
 			y_coord -= 1;
 		}
-		else if(direction == 7) {
+		else {	// direction == 7
 			x_coord += 1;
 			y_coord -= 1;
 		}
@@ -108,7 +108,7 @@ public abstract class Critter {
 		else if(direction == 6) {
 			y_coord -= 2;
 		}
-		else if(direction == 7) {
+		else {	// direction == 7
 			x_coord += 2;
 			y_coord -= 2;
 		}
@@ -118,6 +118,41 @@ public abstract class Critter {
 	}
 	
 	protected final void reproduce(Critter offspring, int direction) {
+		if (energy < Params.min_reproduce_energy) {	// make sure parent has enough energy
+			return;
+		}
+		offspring.energy = energy / 2;	// assign half of energy to child (rounding down)
+		energy -= offspring.energy;		// assign half of energy to parent (rounding up)
+		if (direction == 0) {
+			offspring.x_coord = x_coord + 1;
+		}
+		else if(direction == 1) {
+			offspring.x_coord = x_coord + 1;
+			offspring.y_coord = y_coord + 1;
+		}
+		else if(direction == 2) {
+			offspring.y_coord = y_coord + 1;
+		}
+		else if(direction == 3) {
+			offspring.x_coord = x_coord - 1;
+			offspring.y_coord = y_coord + 1;
+		}
+		else if(direction == 4) {
+			offspring.x_coord = x_coord - 1;
+		}
+		else if(direction == 5) {
+			offspring.x_coord = x_coord - 1;
+			offspring.y_coord = y_coord - 1;
+		}
+		else if(direction == 6) {
+			offspring.y_coord = y_coord - 1;
+		}
+		else {	// direction == 7
+			offspring.x_coord = x_coord + 1;
+			offspring.y_coord = y_coord - 1;
+		}
+		offspring.x_coord %= Params.world_width;
+		offspring.y_coord %= Params.world_height;
 	}
 
 	public abstract void doTimeStep();
