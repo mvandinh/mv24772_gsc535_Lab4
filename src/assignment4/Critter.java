@@ -12,6 +12,8 @@
  */
 package assignment4;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /* see the PDF for descriptions of the methods and fields in this class
@@ -199,7 +201,7 @@ public abstract class Critter {
 	}
 
 	public abstract void doTimeStep();
-	public abstract boolean fight(String opponent);
+	public abstract boolean fight(String oponent);
 	
 	/**
 	 * create and initialize a Critter subclass.
@@ -210,8 +212,24 @@ public abstract class Critter {
 	 * an Exception.)
 	 * @param critter_class_name
 	 * @throws InvalidCritterException
+	 * @throws InvocationTargetException 
+	 * @throws IllegalArgumentException 
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
+	 * @throws SecurityException 
+	 * @throws NoSuchMethodException 
 	 */
-	public static void makeCritter(String critter_class_name) throws InvalidCritterException {
+	public static void makeCritter(String critter_class_name) throws InvalidCritterException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+		try {
+			Class<?> c = Class.forName(myPackage + "." + critter_class_name);
+			Constructor<?> newConstructor = c.getConstructor();
+			Object obj = newConstructor.newInstance();
+			Critter newCritter = (Critter)obj;
+			population.add(newCritter);
+		} catch (ClassNotFoundException e) {
+			throw new InvalidCritterException(critter_class_name);
+		}
+		return;
 	}
 	
 	/**
@@ -222,7 +240,15 @@ public abstract class Critter {
 	 */
 	public static List<Critter> getInstances(String critter_class_name) throws InvalidCritterException {
 		List<Critter> result = new java.util.ArrayList<Critter>();
-	
+		for(Critter c: population){
+			try {
+				if(Class.forName(myPackage + "." + critter_class_name).isInstance(c)){
+					result.add(c);
+				}
+			} catch (ClassNotFoundException e) {
+				throw new InvalidCritterException(critter_class_name);
+			}
+		}
 		return result;
 	}
 	
@@ -309,68 +335,6 @@ public abstract class Critter {
 	}
 	
 	public static void worldTimeStep() {
-		for (Critter crit: population) {
-			crit.doTimeStep();
-			if (crit.energy <= 0) {	// kill dead critters
-				population.remove(crit);
-			}
-		}
-		boolean fightA = false;
-		boolean fightB = false;
-		int powerA = 0;
-		int powerB = 0;
-		for (Critter critA: population) {	// encounters between critter A and critter B
-			for (Critter critB: population) {
-				if (!critA.equals(critB)) {
-					if ((critA.x_coord == critB.x_coord) && (critA.y_coord == critB.y_coord)) {
-						critA.movement_flag = 2;
-						fightA = critA.fight(critB.toString());
-						if (critA.energy <= 0) {	// critter A died while running away
-							population.remove(critA);
-							break;
-						}
-						critB.movement_flag = 2;
-						fightB = critB.fight(critA.toString());
-						if (critB.energy <= 0) {	// critter B died while running away
-							population.remove(critB);
-							break;
-						}
-						if ((critA.x_coord == critB.x_coord) && (critA.y_coord == critB.y_coord)) {
-							if (fightA == false) {	// critter A elected not to fight
-								powerA = 0;
-							}
-							else {	// fightA == true
-								powerA = getRandomInt(critA.energy);
-							}
-							if (fightB == false ) {	// critter B elected not to fight
-								powerB = 0;
-							}
-							else { // fightB == true
-								powerB = getRandomInt(critB.energy);
-							}
-							if (powerA >= powerB) {	// critter A kills critter B
-								critA.energy += critB.energy / 2;
-								population.remove(critB);
-							}
-							else {	// critter B kills critter A
-								critB.energy += critA.energy / 2;
-								population.remove(critA);
-							}
-						}
-						else {
-							break;
-						}
-					}
-				}
-			}
-		}
-		for (Critter crit: population) {	// reset movement flag for critters
-			crit.movement_flag = 0;
-		}
-		for (Critter crit: babies) {	// add babies to the population
-			population.add(crit);
-			babies.remove(crit);
-		}
 	}
 	
 	public static void displayWorld() {
@@ -389,8 +353,8 @@ public abstract class Critter {
 				}
 			}
 		}
-		for (i = population.size() -  1; i >= 0; i--){
-			grid[population.get(i).x_coord + 1][population.get(i).y_coord + 1] = population.get(i).toString();
+		for (Critter c: population){
+			grid[c.x_coord + 1][c.y_coord + 1] = c.toString();
 		}
 		for(i = 0; i < Params.world_height + 1; i++){
 			for(j = 0; j < Params.world_width + 1; j++){
