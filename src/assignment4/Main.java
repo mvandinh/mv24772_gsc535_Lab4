@@ -13,8 +13,11 @@
 
 package assignment4; // cannot be in default package
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 
 /*
@@ -41,8 +44,15 @@ public class Main {
      * Main method.
      * @param args args can be empty.  If not empty, provide two parameters -- the first is a file name, 
      * and the second is test (for test output, where all output to be directed to a String), or nothing.
+     * @throws InvalidCritterException 
+     * @throws InvalidInputException 
+     * @throws InvocationTargetException 
+     * @throws IllegalArgumentException 
+     * @throws IllegalAccessException 
+     * @throws SecurityException 
+     * @throws NoSuchMethodException
      */
-    public static void main(String[] args) { 
+    public static void main(String[] args) throws InvalidCritterException, InvalidInputException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException { 
         if (args.length != 0) {
             try {
                 inputFile = args[0];
@@ -74,11 +84,12 @@ public class Main {
         do {
         	Arrays.fill(splitInput, null);
         	System.out.print("critters>");
-            splitInput = kb.nextLine().split("\\s+");
-    		if (splitInput[0].equals("show")) {		// show - display the world
+        	String input = kb.nextLine();
+            splitInput = input.split("\\s+");
+    		if ((splitInput[0].equals("show")) && (splitInput.length == 1)) {		// show - display the world
     			Critter.displayWorld();
     		}
-    		else if (splitInput[0].equals("step")) {	// step - execute time step(s)
+    		else if ((splitInput[0].equals("step")) && (splitInput.length <= 2)) {	// step - execute time step(s)
     			int num_steps = 1;
     			if (!splitInput[1].equals(null)) {
     				num_steps = Integer.parseInt(splitInput[1]);
@@ -87,43 +98,38 @@ public class Main {
     				Critter.worldTimeStep();
     			}
     		}
-    		else if (splitInput[0].equals("seed")) {	// seed - set the seed
+    		else if ((splitInput[0].equals("seed")) && (splitInput.length == 2)) {	// seed - set the seed
     			if (!splitInput[1].equals(null)) {
     				Critter.setSeed(Integer.parseInt(splitInput[1]));
     			}
-    			else {	// INVALID INPUT
-    				
-    			}
     		}
-    		else if (splitInput[0].equals("make")) {	// make - make critter(s)
+    		else if ((splitInput[0].equals("make")) && (splitInput.length <= 3)) {	// make - make critter(s)
     			int num_make = 1;
     			if (!splitInput[1].equals(null)) {
     				if (!splitInput[2].equals(null)) {
     					num_make = Integer.parseInt(splitInput[2]);
     				}
     				for (int i = 0; i < num_make; i++) {
-    					// Critter.makeCritter(critter_class_name);
+    					Critter.makeCritter(splitInput[1]);
     				}
     			}
-    			else {	// INVALID INPUT
-    				
-    			}
     		}
-    		else if (splitInput[0].equals("stats")) {	// stats - display stats
-    			if (!splitInput[1].equals(null)) {
-    				// Critter.getInstances(critter_class_name);
-    				// critter_class_name.runStats();
-    			}
-    			else {	// INVALID INPUT
-    				
-    			}
-    		}
-    		else {	// INVALID INPUT
+    		else if ((splitInput[0].equals("stats")) && (splitInput.length == 2)) {	// stats - display stats
+    			List<Critter> critStats = Critter.getInstances(splitInput[1]);
+				Class<?> critClass;
+    			try {
+					critClass = Class.forName(myPackage + "." + splitInput[1]);
+    				Method runStats = critClass.getMethod("runStats", List.class);
+					runStats.invoke(null, critStats);			
+				} catch (ClassNotFoundException e) {
+					throw new InvalidCritterException(splitInput[1]);
+				}
     			
     		}
-        } while (!splitInput[0].equals("quit"));	// quit - terminate the program
-        System.out.println("GLHF");
-        
+    		else {
+    			throw new InvalidInputException(input);
+    		}
+        } while (!splitInput[0].equals("quit"));	// quit - terminate the program  
         /* Write your code above */
         System.out.flush();
 
