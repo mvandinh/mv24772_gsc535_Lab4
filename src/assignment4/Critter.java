@@ -13,7 +13,6 @@
 package assignment4;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /* see the PDF for descriptions of the methods and fields in this class
@@ -103,7 +102,7 @@ public abstract class Critter {
 					}
 				}
 				x_coord = x_temp;
-				x_coord = y_temp;
+				y_coord = y_temp;
 				movement_flag = 2;
 			}
 		}
@@ -158,7 +157,7 @@ public abstract class Critter {
 					}
 				}
 				x_coord = x_temp;
-				x_coord = y_temp;
+				y_coord = y_temp;
 				movement_flag = 2;
 			}
 		}
@@ -216,15 +215,8 @@ public abstract class Critter {
 	 * upper. For example, if craig is supplied instead of Craig, an error is thrown instead of
 	 * an Exception.)
 	 * @param critter_class_name
-	 * @throws InvalidCritterException 
-	 * @throws SecurityException 
-	 * @throws NoSuchMethodException 
-	 * @throws InvocationTargetException 
-	 * @throws IllegalArgumentException 
-	 * @throws IllegalAccessException 
-	 * @throws InstantiationException 
 	 */
-	public static void makeCritter(String critter_class_name) throws InvalidCritterException, NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	public static void makeCritter(String critter_class_name) {
 		try {
 			Class<?> c = Class.forName(myPackage + "." + critter_class_name);
 			Constructor<?> newConstructor = c.getConstructor();
@@ -234,8 +226,12 @@ public abstract class Critter {
 			newCritter.y_coord = getRandomInt(Params.world_height);
 			newCritter.energy = Params.start_energy;
 			population.add(newCritter);
-		} catch (ClassNotFoundException e) {
-			throw new InvalidCritterException(critter_class_name);
+		} catch (Exception e) {
+			try {
+				throw new InvalidCritterException(critter_class_name);
+			} catch (InvalidCritterException e1) {
+				System.out.println(e1);
+			}
 		}
 		return;
 	}
@@ -244,17 +240,20 @@ public abstract class Critter {
 	 * Gets a list of critters of a specific type.
 	 * @param critter_class_name What kind of Critter is to be listed.  Unqualified class name.
 	 * @return List of Critters.
-	 * @throws InvalidCritterException 
 	 */
-	public static List<Critter> getInstances(String critter_class_name) throws InvalidCritterException {
+	public static List<Critter> getInstances(String critter_class_name) {
 		List<Critter> result = new java.util.ArrayList<Critter>();
 		for(Critter c: population){
 			try {
 				if(Class.forName(myPackage + "." + critter_class_name).isInstance(c)){
 					result.add(c);
 				}
-			} catch (ClassNotFoundException e) {
-				throw new InvalidCritterException(critter_class_name);
+			} catch (Exception e) {
+				try {
+					throw new InvalidCritterException(critter_class_name);
+				} catch (InvalidCritterException e1) {
+					System.out.println(e1);
+				}
 			}
 		}
 		return result;
@@ -343,16 +342,7 @@ public abstract class Critter {
 		population.clear();
 	}
 	
-	/**
-	 * @throws NoSuchMethodException
-	 * @throws SecurityException
-	 * @throws InstantiationException
-	 * @throws IllegalAccessException
-	 * @throws IllegalArgumentException
-	 * @throws InvocationTargetException
-	 * @throws InvalidCritterException
-	 */
-	public static void worldTimeStep() throws NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, InvalidCritterException {
+	public static void worldTimeStep() {
 		for (Critter crit: population) {
 			crit.doTimeStep();
 			if (crit.energy <= 0) {	// kill dead critters
@@ -406,12 +396,10 @@ public abstract class Critter {
 			}
 		}
 		for (Critter crit: population) {	// deduct rest energy and reset movement flag for critters
-			if (!critRemove.contains(crit)) {
-				crit.energy -= Params.rest_energy_cost;
-				crit.movement_flag = 0;
-				if (crit.energy <= 0) {	// kill dead critters
-					critRemove.add(crit);
-				}
+			crit.energy -= Params.rest_energy_cost;
+			crit.movement_flag = 0;
+			if ((crit.energy <= 0) && (!critRemove.contains(crit))) {	// kill dead critters
+				critRemove.add(crit);
 			}
 		}
 		for (Critter crit: critRemove) {

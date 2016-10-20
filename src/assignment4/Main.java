@@ -12,11 +12,9 @@
  */
 
 package assignment4; // cannot be in default package
-import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.io.*;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 
@@ -43,14 +41,7 @@ public class Main {
     /**
      * Main method.
      * @param args args can be empty.  If not empty, provide two parameters -- the first is a file name, 
-     * and the second is test (for test output, where all output to be directed to a String), or nothing.
-     * @throws InvalidCritterException 
-     * @throws InvocationTargetException 
-     * @throws IllegalArgumentException 
-     * @throws IllegalAccessException 
-     * @throws SecurityException 
-     * @throws NoSuchMethodException
-     * @throws InstantiationException 
+     * and the second is test (for test output, where all output to be directed to a String), or nothing. 
      */
     public static void main(String[] args) { 
         if (args.length != 0) {
