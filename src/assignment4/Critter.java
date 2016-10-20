@@ -87,8 +87,8 @@ public abstract class Critter {
 				x_temp = x_coord + 1;
 				y_temp = y_coord + 1;
 			}
-			x_temp %= Params.world_width;
-			y_temp %= Params.world_height;
+			x_temp = (((x_temp % Params.world_width) + Params.world_width) % Params.world_width);
+			y_temp = (((y_temp % Params.world_height) + Params.world_height) % Params.world_height);
 			if (movement_flag == 0) {
 				x_coord = x_temp;
 				y_coord = y_temp;
@@ -142,8 +142,8 @@ public abstract class Critter {
 				x_temp = x_coord + 2;
 				y_temp = y_coord + 2;
 			}
-			x_temp %= Params.world_width;
-			y_temp %= Params.world_height;
+			x_temp = (((x_temp % Params.world_width) + Params.world_width) % Params.world_width);
+			y_temp = (((y_temp % Params.world_height) + Params.world_height) % Params.world_height);
 			if (movement_flag == 0) {
 				x_coord = x_temp;
 				y_coord = y_temp;
@@ -198,8 +198,8 @@ public abstract class Critter {
 			offspring.x_coord = x_coord + 1;
 			offspring.y_coord = y_coord + 1;
 		}
-		offspring.x_coord %= Params.world_width;
-		offspring.y_coord %= Params.world_height;
+		offspring.x_coord = (((offspring.x_coord % Params.world_width) + Params.world_width) % Params.world_width);
+		offspring.y_coord = (((offspring.y_coord % Params.world_height) + Params.world_height) % Params.world_height);
 		babies.add(offspring);
 	}
 
@@ -431,7 +431,7 @@ public abstract class Critter {
 			}
 		}
 		for (Critter c: population){
-			grid[c.y_coord + 1][c.x_coord + 1] = c.toString();	// to my understanding, exception thrown here
+			grid[c.y_coord + 1][c.x_coord + 1] = c.toString();
 		}
 		for(i = 0; i < Params.world_height + 2; i++){
 			for(j = 0; j < Params.world_width + 2; j++){
