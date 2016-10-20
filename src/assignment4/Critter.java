@@ -337,7 +337,7 @@ public abstract class Critter {
 		}
 	}
 	
-	public static void worldTimeStep() {
+	public static void worldTimeStep() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, InvalidCritterException {
 		for (Critter crit: population) {
 			crit.doTimeStep();
 			if (crit.energy <= 0) {	// kill dead critters
@@ -393,13 +393,18 @@ public abstract class Critter {
 				}
 			}
 		}
-		for (Critter crit: population) {	// reset movement flag for critters
+		for (Critter crit: population) {	// deduct rest energy and reset movement flag for critters
+			crit.energy -= Params.rest_energy_cost;
 			crit.movement_flag = 0;
+			if (crit.energy <= 0) {	// kill dead critters
+				population.remove(crit);
+			}
 		}
-		for (Critter crit: babies) {	// add babies to the population
-			population.add(crit);
-			babies.remove(crit);
+		for (int i = 0; i < Params.refresh_algae_count; i++) {	// add algae to the world
+			makeCritter("Algae");
 		}
+		population.addAll(babies);	// add babies to the population
+		babies.clear();
 	}
 	
 	public static void displayWorld() {
