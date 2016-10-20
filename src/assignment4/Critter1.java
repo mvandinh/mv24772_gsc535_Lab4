@@ -19,7 +19,7 @@ package assignment4;
 public class Critter1 extends Critter {
 	
 	@Override
-	public String toString() { return "C"; }
+	public String toString() { return "1"; }
 	
 	private static final int GENE_TOTAL = 24;
 	private int[] genes = new int[8];

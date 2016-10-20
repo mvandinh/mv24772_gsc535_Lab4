@@ -89,9 +89,9 @@ public class Main {
         		if ((splitInput[0].equals("show")) && (splitInput.length == 1)) {		// show - display the world
         			Critter.displayWorld();
         		}
-        		else if ((splitInput[0].equals("step")) && (splitInput.length <= 2)) {	// step - execute time step(s)
+        		else if ((splitInput[0].equals("step")) && ((splitInput.length == 1) || (splitInput.length == 2))) {	// step - execute time step(s)
         			int num_steps = 1;
-        			if (!splitInput[1].equals(null)) {
+        			if (splitInput.length == 2) {
         				num_steps = Integer.parseInt(splitInput[1]);
         			}
         			for (int i = 0; i < num_steps; i++) {
@@ -103,15 +103,13 @@ public class Main {
         				Critter.setSeed(Integer.parseInt(splitInput[1]));
         			}
         		}
-        		else if ((splitInput[0].equals("make")) && (splitInput.length <= 3)) {	// make - make critter(s)
+        		else if ((splitInput[0].equals("make")) && ((splitInput.length == 2) || (splitInput.length == 3))) {	// make - make critter(s)
         			int num_make = 1;
-        			if (!splitInput[1].equals(null)) {
-        				if (!splitInput[2].equals(null)) {
-        					num_make = Integer.parseInt(splitInput[2]);
-        				}
-        				for (int i = 0; i < num_make; i++) {
-        					Critter.makeCritter(splitInput[1]);
-        				}
+        			if (splitInput.length == 3) {
+        				num_make = Integer.parseInt(splitInput[2]);
+        			}
+        			for (int i = 0; i < num_make; i++) {
+        				Critter.makeCritter(splitInput[1]);
         			}
         		}
         		else if ((splitInput[0].equals("stats")) && (splitInput.length == 2)) {	// stats - display stats
