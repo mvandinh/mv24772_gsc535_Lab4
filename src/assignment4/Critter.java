@@ -49,76 +49,114 @@ public abstract class Critter {
 	private int x_coord;
 	private int y_coord;
 	
-	private boolean movement_flag = false;
+	private int movement_flag = 0;	// 0 for rest, 1 for walk/run, 2 for fight
 	
 	protected final void walk(int direction) {
-		if (direction == 0) {
-			x_coord += 1;
-		}
-		else if(direction == 1) {
-			x_coord += 1;
-			y_coord += 1;
-		}
-		else if(direction == 2) {
-			y_coord += 1;
-		}
-		else if(direction == 3) {
-			x_coord -= 1;
-			y_coord += 1;
-		}
-		else if(direction == 4) {
-			x_coord -= 1;
-		}
-		else if(direction == 5) {
-			x_coord -= 1;
-			y_coord -= 1;
-		}
-		else if(direction == 6) {
-			y_coord -= 1;
-		}
-		else {	// direction == 7
-			x_coord += 1;
-			y_coord -= 1;
-		}
-		x_coord %= Params.world_width;
-		y_coord %= Params.world_height;
 		energy -= Params.walk_energy_cost;
-		movement_flag = true;
+		int x_temp = 0;
+		int y_temp = 0;
+		if (movement_flag != 1) {	// critter has already moved during time step
+			if (direction == 0) {
+				x_temp = x_coord + 1;
+			}
+			else if(direction == 1) {
+				x_temp = x_coord + 1;
+				y_temp = y_coord + 1;
+			}
+			else if(direction == 2) {
+				y_temp = y_coord + 1;
+			}
+			else if(direction == 3) {
+				x_temp = x_coord - 1;
+				y_temp = y_coord + 1;
+			}
+			else if(direction == 4) {
+				x_temp = x_coord - 1;
+			}
+			else if(direction == 5) {
+				x_temp = x_coord - 1;
+				y_temp = y_coord - 1;
+			}
+			else if(direction == 6) {
+				y_temp = y_coord - 1;
+			}
+			else {	// direction == 7
+				x_temp = x_coord + 1;
+				y_temp = y_coord - 1;
+			}
+			x_temp %= Params.world_width;
+			y_temp %= Params.world_height;
+			if (movement_flag == 0) {
+				x_coord = x_temp;
+				y_coord = y_temp;
+				movement_flag = 1;
+			}
+			else {	// movement flag == 2
+				for (Critter crit: population) {
+					if (!this.equals(crit)) {
+						if ((x_temp == crit.x_coord) && (y_temp == crit.y_coord)) {
+							return;
+						}
+					}
+				}
+				x_coord = x_temp;
+				x_coord = y_temp;
+			}
+		}
 	}
 	
 	protected final void run(int direction) {
-		if (direction == 0) {
-			x_coord += 2;
-		}
-		else if(direction == 1) {
-			x_coord += 2;
-			y_coord += 2;
-		}
-		else if(direction == 2) {
-			y_coord += 2;
-		}
-		else if(direction == 3) {
-			x_coord -= 2;
-			y_coord += 2;
-		}
-		else if(direction == 4) {
-			x_coord -= 2;
-		}
-		else if(direction == 5) {
-			x_coord -= 2;
-			y_coord -= 2;
-		}
-		else if(direction == 6) {
-			y_coord -= 2;
-		}
-		else {	// direction == 7
-			x_coord += 2;
-			y_coord -= 2;
-		}
-		x_coord %= Params.world_width;
-		y_coord %= Params.world_height;
 		energy -= Params.run_energy_cost;
-		movement_flag = true;
+		int x_temp = 0;
+		int y_temp = 0;
+		if (movement_flag != 1) {	// critter has already moved during time step
+			if (direction == 0) {
+				x_temp = x_coord + 2;
+			}
+			else if(direction == 1) {
+				x_temp = x_coord + 2;
+				y_temp = y_coord + 2;
+			}
+			else if(direction == 2) {
+				y_temp = y_coord + 2;
+			}
+			else if(direction == 3) {
+				x_temp = x_coord - 2;
+				y_temp = y_coord + 2;
+			}
+			else if(direction == 4) {
+				x_temp = x_coord - 2;
+			}
+			else if(direction == 5) {
+				x_temp = x_coord - 2;
+				y_temp = y_coord - 2;
+			}
+			else if(direction == 6) {
+				y_temp = y_coord - 2;
+			}
+			else {	// direction == 7
+				x_temp = x_coord + 2;
+				y_temp = y_coord - 2;
+			}
+			x_temp %= Params.world_width;
+			y_temp %= Params.world_height;
+			if (movement_flag == 0) {
+				x_coord = x_temp;
+				y_coord = y_temp;
+				movement_flag = 1;
+			}
+			else {	// movement flag == 2
+				for (Critter crit: population) {
+					if (!this.equals(crit)) {
+						if ((x_temp == crit.x_coord) && (y_temp == crit.y_coord)) {
+							return;
+						}
+					}
+				}
+				x_coord = x_temp;
+				x_coord = y_temp;
+			}
+		}
 	}
 	
 	protected final void reproduce(Critter offspring, int direction) {
@@ -285,11 +323,13 @@ public abstract class Critter {
 			for (Critter critB: population) {
 				if (!critA.equals(critB)) {
 					if ((critA.x_coord == critB.x_coord) && (critA.y_coord == critB.y_coord)) {
+						critA.movement_flag = 2;
 						fightA = critA.fight(critB.toString());
 						if (critA.energy <= 0) {	// critter A died while running away
 							population.remove(critA);
 							break;
 						}
+						critB.movement_flag = 2;
 						fightB = critB.fight(critA.toString());
 						if (critB.energy <= 0) {	// critter B died while running away
 							population.remove(critB);
@@ -325,7 +365,7 @@ public abstract class Critter {
 			}
 		}
 		for (Critter crit: population) {	// reset movement flag for critters
-			crit.movement_flag = false;
+			crit.movement_flag = 0;
 		}
 		for (Critter crit: babies) {	// add babies to the population
 			population.add(crit);
