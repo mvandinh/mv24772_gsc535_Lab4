@@ -45,7 +45,6 @@ public class Main {
      * @param args args can be empty.  If not empty, provide two parameters -- the first is a file name, 
      * and the second is test (for test output, where all output to be directed to a String), or nothing.
      * @throws InvalidCritterException 
-     * @throws InvalidInputException 
      * @throws InvocationTargetException 
      * @throws IllegalArgumentException 
      * @throws IllegalAccessException 
@@ -53,7 +52,7 @@ public class Main {
      * @throws NoSuchMethodException
      * @throws InstantiationException 
      */
-    public static void main(String[] args) throws InvalidCritterException, InvalidInputException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, InstantiationException { 
+    public static void main(String[] args) throws InvalidCritterException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, InstantiationException { 
         if (args.length != 0) {
             try {
                 inputFile = args[0];
@@ -81,55 +80,59 @@ public class Main {
 
         /* Do not alter the code above for your submission. */
         /* Write your code below. */
-        String[] splitInput = null;
+        String input= null;
         do {
-        	Arrays.fill(splitInput, null);
-        	System.out.print("critters>");
-        	String input = kb.nextLine();
-            splitInput = input.split("\\s+");
-    		if ((splitInput[0].equals("show")) && (splitInput.length == 1)) {		// show - display the world
-    			Critter.displayWorld();
-    		}
-    		else if ((splitInput[0].equals("step")) && (splitInput.length <= 2)) {	// step - execute time step(s)
-    			int num_steps = 1;
-    			if (!splitInput[1].equals(null)) {
-    				num_steps = Integer.parseInt(splitInput[1]);
-    			}
-    			for (int i = 0; i < num_steps; i++) {
-    				Critter.worldTimeStep();
-    			}
-    		}
-    		else if ((splitInput[0].equals("seed")) && (splitInput.length == 2)) {	// seed - set the seed
-    			if (!splitInput[1].equals(null)) {
-    				Critter.setSeed(Integer.parseInt(splitInput[1]));
-    			}
-    		}
-    		else if ((splitInput[0].equals("make")) && (splitInput.length <= 3)) {	// make - make critter(s)
-    			int num_make = 1;
-    			if (!splitInput[1].equals(null)) {
-    				if (!splitInput[2].equals(null)) {
-    					num_make = Integer.parseInt(splitInput[2]);
+        	try {
+        		System.out.print("critters>");
+            	input = kb.nextLine();
+                String[] splitInput = input.split("\\s+");
+        		if ((splitInput[0].equals("show")) && (splitInput.length == 1)) {		// show - display the world
+        			Critter.displayWorld();
+        		}
+        		else if ((splitInput[0].equals("step")) && (splitInput.length <= 2)) {	// step - execute time step(s)
+        			int num_steps = 1;
+        			if (!splitInput[1].equals(null)) {
+        				num_steps = Integer.parseInt(splitInput[1]);
+        			}
+        			for (int i = 0; i < num_steps; i++) {
+        				Critter.worldTimeStep();
+        			}
+        		}
+        		else if ((splitInput[0].equals("seed")) && (splitInput.length == 2)) {	// seed - set the seed
+        			if (!splitInput[1].equals(null)) {
+        				Critter.setSeed(Integer.parseInt(splitInput[1]));
+        			}
+        		}
+        		else if ((splitInput[0].equals("make")) && (splitInput.length <= 3)) {	// make - make critter(s)
+        			int num_make = 1;
+        			if (!splitInput[1].equals(null)) {
+        				if (!splitInput[2].equals(null)) {
+        					num_make = Integer.parseInt(splitInput[2]);
+        				}
+        				for (int i = 0; i < num_make; i++) {
+        					Critter.makeCritter(splitInput[1]);
+        				}
+        			}
+        		}
+        		else if ((splitInput[0].equals("stats")) && (splitInput.length == 2)) {	// stats - display stats
+        			List<Critter> critStats = Critter.getInstances(splitInput[1]);
+    				Class<?> critClass;
+        			try {
+    					critClass = Class.forName(myPackage + "." + splitInput[1]);
+        				Method runStats = critClass.getMethod("runStats", List.class);
+    					runStats.invoke(null, critStats);			
+    				} catch (ClassNotFoundException e) {
+    					throw new InvalidCritterException(splitInput[1]);
     				}
-    				for (int i = 0; i < num_make; i++) {
-    					Critter.makeCritter(splitInput[1]);
-    				}
-    			}
-    		}
-    		else if ((splitInput[0].equals("stats")) && (splitInput.length == 2)) {	// stats - display stats
-    			List<Critter> critStats = Critter.getInstances(splitInput[1]);
-				Class<?> critClass;
-    			try {
-					critClass = Class.forName(myPackage + "." + splitInput[1]);
-    				Method runStats = critClass.getMethod("runStats", List.class);
-					runStats.invoke(null, critStats);			
-				} catch (ClassNotFoundException e) {
-					throw new InvalidCritterException(splitInput[1]);
-				}
-    		}
-    		else {
-    			throw new InvalidInputException(input);
-    		}
-        } while (!splitInput[0].equals("quit"));	// quit - terminate the program  
+        		}
+        		else if ((splitInput[0].equals("quit")) && (splitInput.length == 1)) {}	// quit - terminates the program
+        		else {
+        			System.out.println("invalid command: " + input);
+        		}
+        	} catch (Exception e) {
+        		System.out.println("error processing: " + input);
+        	}
+        } while (!input.equals("quit"));
         /* Write your code above */
         System.out.flush();
 
