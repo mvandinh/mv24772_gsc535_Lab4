@@ -49,6 +49,8 @@ public abstract class Critter {
 	private int x_coord;
 	private int y_coord;
 	
+	private boolean movement_flag = false;
+	
 	protected final void walk(int direction) {
 		if (direction == 0) {
 			x_coord += 1;
@@ -81,6 +83,7 @@ public abstract class Critter {
 		x_coord %= Params.world_width;
 		y_coord %= Params.world_height;
 		energy -= Params.walk_energy_cost;
+		movement_flag = true;
 	}
 	
 	protected final void run(int direction) {
@@ -115,6 +118,7 @@ public abstract class Critter {
 		x_coord %= Params.world_width;
 		y_coord %= Params.world_height;
 		energy -= Params.run_energy_cost;
+		movement_flag = true;
 	}
 	
 	protected final void reproduce(Critter offspring, int direction) {
@@ -153,6 +157,7 @@ public abstract class Critter {
 		}
 		offspring.x_coord %= Params.world_width;
 		offspring.y_coord %= Params.world_height;
+		babies.add(offspring);
 	}
 
 	public abstract void doTimeStep();
@@ -266,6 +271,66 @@ public abstract class Critter {
 	}
 	
 	public static void worldTimeStep() {
+		for (Critter crit: population) {
+			crit.doTimeStep();
+			if (crit.energy <= 0) {	// kill dead critters
+				population.remove(crit);
+			}
+		}
+		boolean fightA = false;
+		boolean fightB = false;
+		int powerA = 0;
+		int powerB = 0;
+		for (Critter critA: population) {	// encounters between critter A and critter B
+			for (Critter critB: population) {
+				if (!critA.equals(critB)) {
+					if ((critA.x_coord == critB.x_coord) && (critA.y_coord == critB.y_coord)) {
+						fightA = critA.fight(critB.toString());
+						if (critA.energy <= 0) {	// critter A died while running away
+							population.remove(critA);
+							break;
+						}
+						fightB = critB.fight(critA.toString());
+						if (critB.energy <= 0) {	// critter B died while running away
+							population.remove(critB);
+							break;
+						}
+						if ((critA.x_coord == critB.x_coord) && (critA.y_coord == critB.y_coord)) {
+							if (fightA == false) {	// critter A elected not to fight
+								powerA = 0;
+							}
+							else {	// fightA == true
+								powerA = getRandomInt(critA.energy);
+							}
+							if (fightB == false ) {	// critter B elected not to fight
+								powerB = 0;
+							}
+							else { // fightB == true
+								powerB = getRandomInt(critB.energy);
+							}
+							if (powerA >= powerB) {	// critter A kills critter B
+								critA.energy += critB.energy / 2;
+								population.remove(critB);
+							}
+							else {	// critter B kills critter A
+								critB.energy += critA.energy / 2;
+								population.remove(critA);
+							}
+						}
+						else {
+							break;
+						}
+					}
+				}
+			}
+		}
+		for (Critter crit: population) {	// reset movement flag for critters
+			crit.movement_flag = false;
+		}
+		for (Critter crit: babies) {	// add babies to the population
+			population.add(crit);
+			babies.remove(crit);
+		}
 	}
 	
 	public static void displayWorld() {
