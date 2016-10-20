@@ -51,8 +51,9 @@ public class Main {
      * @throws IllegalAccessException 
      * @throws SecurityException 
      * @throws NoSuchMethodException
+     * @throws InstantiationException 
      */
-    public static void main(String[] args) throws InvalidCritterException, InvalidInputException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException { 
+    public static void main(String[] args) throws InvalidCritterException, InvalidInputException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, InstantiationException { 
         if (args.length != 0) {
             try {
                 inputFile = args[0];
@@ -124,7 +125,6 @@ public class Main {
 				} catch (ClassNotFoundException e) {
 					throw new InvalidCritterException(splitInput[1]);
 				}
-    			
     		}
     		else {
     			throw new InvalidInputException(input);
