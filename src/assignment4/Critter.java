@@ -12,6 +12,8 @@
  */
 package assignment4;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /* see the PDF for descriptions of the methods and fields in this class
@@ -199,7 +201,7 @@ public abstract class Critter {
 	}
 
 	public abstract void doTimeStep();
-	public abstract boolean fight(String opponent);
+	public abstract boolean fight(String oponent);
 	
 	/**
 	 * create and initialize a Critter subclass.
@@ -210,8 +212,24 @@ public abstract class Critter {
 	 * an Exception.)
 	 * @param critter_class_name
 	 * @throws InvalidCritterException
+	 * @throws InvocationTargetException 
+	 * @throws IllegalArgumentException 
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
+	 * @throws SecurityException 
+	 * @throws NoSuchMethodException 
 	 */
-	public static void makeCritter(String critter_class_name) throws InvalidCritterException {
+	public static void makeCritter(String critter_class_name) throws InvalidCritterException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+		try {
+			Class<?> c = Class.forName(myPackage + "." + critter_class_name);
+			Constructor<?> newConstructor = c.getConstructor();
+			Object obj = newConstructor.newInstance();
+			Critter newCritter = (Critter)obj;
+			population.add(newCritter);
+		} catch (ClassNotFoundException e) {
+			throw new InvalidCritterException(critter_class_name);
+		}
+		return;
 	}
 	
 	/**
@@ -222,7 +240,15 @@ public abstract class Critter {
 	 */
 	public static List<Critter> getInstances(String critter_class_name) throws InvalidCritterException {
 		List<Critter> result = new java.util.ArrayList<Critter>();
-	
+		for(Critter c: population){
+			try {
+				if(Class.forName(myPackage + "." + critter_class_name).isInstance(c)){
+					result.add(c);
+				}
+			} catch (ClassNotFoundException e) {
+				throw new InvalidCritterException(critter_class_name);
+			}
+		}
 		return result;
 	}
 	
@@ -392,8 +418,8 @@ public abstract class Critter {
 				}
 			}
 		}
-		for (i = population.size() -  1; i >= 0; i--){
-			grid[population.get(i).x_coord + 1][population.get(i).y_coord + 1] = population.get(i).toString();
+		for (Critter c: population){
+			grid[c.x_coord + 1][c.y_coord + 1] = c.toString();
 		}
 		for(i = 0; i < Params.world_height + 1; i++){
 			for(j = 0; j < Params.world_width + 1; j++){
