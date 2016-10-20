@@ -225,6 +225,9 @@ public abstract class Critter {
 			Constructor<?> newConstructor = c.getConstructor();
 			Object obj = newConstructor.newInstance();
 			Critter newCritter = (Critter)obj;
+			newCritter.x_coord = getRandomInt(Params.world_height);
+			newCritter.y_coord = getRandomInt(Params.world_width);
+			newCritter.energy = Params.start_energy;
 			population.add(newCritter);
 		} catch (ClassNotFoundException e) {
 			throw new InvalidCritterException(critter_class_name);
