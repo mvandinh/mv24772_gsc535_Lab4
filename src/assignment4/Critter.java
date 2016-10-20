@@ -56,8 +56,8 @@ public abstract class Critter {
 	
 	protected final void walk(int direction) {
 		energy -= Params.walk_energy_cost;
-		int x_temp = 0;
-		int y_temp = 0;
+		int x_temp = x_coord;
+		int y_temp = y_coord;
 		if (movement_flag < 2) {	// critter has not moved during time step
 			if (direction == 0) {
 				x_temp = x_coord + 1;
@@ -111,8 +111,8 @@ public abstract class Critter {
 	
 	protected final void run(int direction) {
 		energy -= Params.run_energy_cost;
-		int x_temp = 0;
-		int y_temp = 0;
+		int x_temp = x_coord;
+		int y_temp = y_coord;
 		if (movement_flag < 2) {	// critter has not moved during time step
 			if (direction == 0) {
 				x_temp = x_coord + 2;
@@ -170,6 +170,8 @@ public abstract class Critter {
 		}
 		offspring.energy = energy / 2;	// assign half of energy to child (rounding down)
 		energy -= offspring.energy;		// assign half of energy to parent (rounding up)
+		offspring.x_coord = x_coord;
+		offspring.y_coord = y_coord;
 		if (direction == 0) {
 			offspring.x_coord = x_coord + 1;
 		}
@@ -214,15 +216,15 @@ public abstract class Critter {
 	 * upper. For example, if craig is supplied instead of Craig, an error is thrown instead of
 	 * an Exception.)
 	 * @param critter_class_name
-	 * @throws InvalidCritterException
+	 * @throws InvalidCritterException 
+	 * @throws SecurityException 
+	 * @throws NoSuchMethodException 
 	 * @throws InvocationTargetException 
 	 * @throws IllegalArgumentException 
 	 * @throws IllegalAccessException 
 	 * @throws InstantiationException 
-	 * @throws SecurityException 
-	 * @throws NoSuchMethodException 
 	 */
-	public static void makeCritter(String critter_class_name) throws InvalidCritterException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+	public static void makeCritter(String critter_class_name) throws InvalidCritterException, NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		try {
 			Class<?> c = Class.forName(myPackage + "." + critter_class_name);
 			Constructor<?> newConstructor = c.getConstructor();
@@ -242,7 +244,7 @@ public abstract class Critter {
 	 * Gets a list of critters of a specific type.
 	 * @param critter_class_name What kind of Critter is to be listed.  Unqualified class name.
 	 * @return List of Critters.
-	 * @throws InvalidCritterException
+	 * @throws InvalidCritterException 
 	 */
 	public static List<Critter> getInstances(String critter_class_name) throws InvalidCritterException {
 		List<Critter> result = new java.util.ArrayList<Critter>();
@@ -341,7 +343,16 @@ public abstract class Critter {
 		population.clear();
 	}
 	
-	public static void worldTimeStep() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, InvalidCritterException {
+	/**
+	 * @throws NoSuchMethodException
+	 * @throws SecurityException
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws IllegalArgumentException
+	 * @throws InvocationTargetException
+	 * @throws InvalidCritterException
+	 */
+	public static void worldTimeStep() throws NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, InvalidCritterException {
 		for (Critter crit: population) {
 			crit.doTimeStep();
 			if (crit.energy <= 0) {	// kill dead critters
