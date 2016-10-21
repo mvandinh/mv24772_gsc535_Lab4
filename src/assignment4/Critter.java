@@ -231,14 +231,14 @@ public abstract class Critter {
 	 */
 	public static void makeCritter(String critter_class_name) {
 		try {
-			Class<?> c = Class.forName(myPackage + "." + critter_class_name);
-			Constructor<?> newConstructor = c.getConstructor();
-			Object obj = newConstructor.newInstance();
-			Critter newCritter = (Critter)obj;
-			newCritter.x_coord = getRandomInt(Params.world_width);
+			Class<?> c = Class.forName(myPackage + "." + critter_class_name);	//gets Class based on parameter
+			Constructor<?> newConstructor = c.getConstructor();	//makes constructor for class c
+			Object obj = newConstructor.newInstance();	//creates an Object from class c constructor
+			Critter newCritter = (Critter)obj;	//instantiates a Critter of class c
+			newCritter.x_coord = getRandomInt(Params.world_width); //randomize coordinates
 			newCritter.y_coord = getRandomInt(Params.world_height);
 			newCritter.energy = Params.start_energy;
-			population.add(newCritter);
+			population.add(newCritter); //add to world
 		} catch (Exception e) {	// if the Critter is invalid, throw an exception
 			try {
 				throw new InvalidCritterException(critter_class_name);
@@ -255,11 +255,11 @@ public abstract class Critter {
 	 * @return List of Critters.
 	 */
 	public static List<Critter> getInstances(String critter_class_name) {
-		List<Critter> result = new java.util.ArrayList<Critter>();
+		List<Critter> result = new java.util.ArrayList<Critter>();	//create empty ArrayList
 		for(Critter c: population){
 			try {
 				if(Class.forName(myPackage + "." + critter_class_name).isInstance(c)){
-					result.add(c);
+					result.add(c); //adds all instances of particular critter found in population
 				}
 			} catch (Exception e) {	// if the Critter is invalid, throw an exception
 				try {
@@ -433,27 +433,27 @@ public abstract class Critter {
 	 * Display the positions of each critter in the world
 	 */
 	public static void displayWorld() {
-		String[][] grid = new String[Params.world_height + 2][Params.world_width + 2];
+		String[][] grid = new String[Params.world_height + 2][Params.world_width + 2]; //generate array (+2 is to account for borders)
 		int i;
 		int j;
-		for(i = Params.world_height + 1; i >=0; i--){
-			for(j = Params.world_width + 1; j >= 0; j--){
+		for(i = Params.world_height + 1; i >=0; i--){ //increment through rows
+			for(j = Params.world_width + 1; j >= 0; j--){ //increment through columns 
 				if((i == Params.world_height + 1) || (i == 0)){
-					if((j == Params.world_width + 1) || (j == 0)){ grid[i][j] = "+";}
-					else { grid[i][j] = "-";}
+					if((j == Params.world_width + 1) || (j == 0)){ grid[i][j] = "+";} //for corners
+					else { grid[i][j] = "-";} //for top and bottom rows
 				}
 				else{
-					if((j == Params.world_width + 1) || (j == 0)){ grid[i][j] = "|";}
-					else {grid[i][j] = " ";}
+					if((j == Params.world_width + 1) || (j == 0)){ grid[i][j] = "|";} //for left and right columns
+					else {grid[i][j] = " ";} //for empty space
 				}
 			}
 		}
-		for (Critter c: population){
+		for (Critter c: population){		//populate board with Critters
 			grid[c.y_coord + 1][c.x_coord + 1] = c.toString();
 		}
 		for(i = 0; i < Params.world_height + 2; i++){
 			for(j = 0; j < Params.world_width + 2; j++){
-				System.out.print(grid[i][j]);
+				System.out.print(grid[i][j]);	//print board
 			}
 			System.out.println();
 		}
