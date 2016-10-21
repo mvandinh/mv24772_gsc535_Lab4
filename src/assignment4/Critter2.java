@@ -1,4 +1,4 @@
-/* CRITTERS Critter1.java
+/* CRITTERS Critter2.java
  * EE422C Project 4 submission by
  * Minh Van-Dinh
  * mv24772

@@ -14,7 +14,9 @@
 package assignment4;
 
 /*
- * Critter4 rests and does not fight when it has less than 20 energy, otherwise it walks, it will make a baby when it has more than 50 energy
+ * Critter4 rests if it has less than 20 energy, otherwise it walks
+ * Critter4 does not fight if it has less than 20 energy and it will attempt to run away
+ * Critter4 will make a baby when it has more than 50 energy
  */
 public class Critter4 extends Critter {
 	

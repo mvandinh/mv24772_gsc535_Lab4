@@ -118,14 +118,14 @@ public class Main {
             		}
             		else if ((splitInput[0].equals("quit")) && (splitInput.length == 1)) {}	// quit - terminates the program
             		else {
-            			throw new Exception();
+            			throw new Exception();	// if input is invalid, throw an exception
             		}
             	} catch (Exception e) {
             		System.out.println("error processing: " + input);
             	}
             }
             else {
-    			System.out.println("invalid command: " + input);
+    			System.out.println("invalid command: " + input);	// if command is invalid, print an error message
     		}
         } while (!input.equals("quit"));
         /* Write your code above */

@@ -14,7 +14,9 @@
 package assignment4;
 
 /*
- * Critter3 only runs, always fights, and never has babies to conserve its energy
+ * Critter3 always runs during time steps
+ * Critter3 always attempts to fight during an encounter
+ * Critter3 never has babies to conserve its energy
  */
 public class Critter3 extends Critter {
 	

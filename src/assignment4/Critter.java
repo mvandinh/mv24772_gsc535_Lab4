@@ -53,11 +53,15 @@ public abstract class Critter {
 	private int movement_flag = 0;	// 0 for has not moved, 1 for has not move and wants to flee fight, 2 for has moved
 	private static List<Critter> critRemove = new java.util.ArrayList<Critter>();	// list of dead critters
 	
+	/**
+	 * Critter moves one space forward in the specified direction
+	 * @param direction - eight directions in total (cardinal, ordinal)
+	 */
 	protected final void walk(int direction) {
 		energy -= Params.walk_energy_cost;
 		int x_temp = x_coord;
 		int y_temp = y_coord;
-		if (movement_flag < 2) {	// critter has not moved during time step
+		if (movement_flag < 2) {	// flag > 2 - the critter has already moved this time step
 			if (direction == 0) {
 				x_temp = x_coord + 1;
 			}
@@ -88,15 +92,15 @@ public abstract class Critter {
 			}
 			x_temp = (((x_temp % Params.world_width) + Params.world_width) % Params.world_width);
 			y_temp = (((y_temp % Params.world_height) + Params.world_height) % Params.world_height);
-			if (movement_flag == 0) {
+			if (movement_flag == 0) { // the critter has not moved this time step
 				x_coord = x_temp;
 				y_coord = y_temp;
 				movement_flag = 2;
 			}
-			else {	// movement flag == 1
+			else {	// movement flag == 1 - the critter is attempting to flee from a fight
 				for (Critter crit: population) {
 					if ((!this.equals(crit)) && (!critRemove.contains(crit))) {
-						if ((x_temp == crit.x_coord) && (y_temp == crit.y_coord)) {
+						if ((x_temp == crit.x_coord) && (y_temp == crit.y_coord)) {	// if the space is occupied do not move
 							return;
 						}
 					}
@@ -108,11 +112,15 @@ public abstract class Critter {
 		}
 	}
 	
+	/**
+	 * Critter moves two spaces forward in the specified direction
+	 * @param direction - eight directions in total (cardinal, ordinal)
+	 */
 	protected final void run(int direction) {
 		energy -= Params.run_energy_cost;
 		int x_temp = x_coord;
 		int y_temp = y_coord;
-		if (movement_flag < 2) {	// critter has not moved during time step
+		if (movement_flag < 2) {	// flag > 2 - this critter has already moved this time step
 			if (direction == 0) {
 				x_temp = x_coord + 2;
 			}
@@ -143,15 +151,15 @@ public abstract class Critter {
 			}
 			x_temp = (((x_temp % Params.world_width) + Params.world_width) % Params.world_width);
 			y_temp = (((y_temp % Params.world_height) + Params.world_height) % Params.world_height);
-			if (movement_flag == 0) {
+			if (movement_flag == 0) {	// the critter has not moved this time step
 				x_coord = x_temp;
 				y_coord = y_temp;
 				movement_flag = 2;
 			}
-			else {	// movement flag == 1
+			else {	// movement flag == 1 - the critter is attempting to flee a fight
 				for (Critter crit: population) {
 					if ((!this.equals(crit)) && (!critRemove.contains(crit))) {
-						if ((x_temp == crit.x_coord) && (y_temp == crit.y_coord)) {
+						if ((x_temp == crit.x_coord) && (y_temp == crit.y_coord)) {	// if the space is occupied do not move
 							return;
 						}
 					}
@@ -163,6 +171,11 @@ public abstract class Critter {
 		}
 	}
 	
+	/**
+	 * give the child the correct amount of energy and place it in the proper tile
+	 * @param offspring - the child
+	 * @param direction - eight directions in total (cardinal, ordinal)
+	 */
 	protected final void reproduce(Critter offspring, int direction) {
 		if (energy < Params.min_reproduce_energy) {	// make sure parent has enough energy
 			return;
@@ -171,7 +184,7 @@ public abstract class Critter {
 		energy -= offspring.energy;		// assign half of energy to parent (rounding up)
 		offspring.x_coord = x_coord;
 		offspring.y_coord = y_coord;
-		if (direction == 0) {
+		if (direction == 0) {	// place the offspring in the correct adjacent tile
 			offspring.x_coord = x_coord + 1;
 		}
 		else if(direction == 1) {
@@ -226,7 +239,7 @@ public abstract class Critter {
 			newCritter.y_coord = getRandomInt(Params.world_height);
 			newCritter.energy = Params.start_energy;
 			population.add(newCritter);
-		} catch (Exception e) {
+		} catch (Exception e) {	// if the Critter is invalid, throw an exception
 			try {
 				throw new InvalidCritterException(critter_class_name);
 			} catch (InvalidCritterException e1) {
@@ -248,7 +261,7 @@ public abstract class Critter {
 				if(Class.forName(myPackage + "." + critter_class_name).isInstance(c)){
 					result.add(c);
 				}
-			} catch (Exception e) {
+			} catch (Exception e) {	// if the Critter is invalid, throw an exception
 				try {
 					throw new InvalidCritterException(critter_class_name);
 				} catch (InvalidCritterException e1) {
@@ -342,10 +355,13 @@ public abstract class Critter {
 		population.clear();
 	}
 	
+	/**
+	 * Invoke doTimeStep() for each critter in the world, simulate encounters between critters, update energy, add algae, remove dead critters
+	 */
 	public static void worldTimeStep() {
 		for (Critter crit: population) {
 			crit.doTimeStep();
-			if (crit.energy <= 0) {	// kill dead critters
+			if (crit.energy <= 0) {	// add dead critters to the kill list
 				critRemove.add(crit);
 			}
 		}
@@ -402,7 +418,7 @@ public abstract class Critter {
 				critRemove.add(crit);
 			}
 		}
-		for (Critter crit: critRemove) {
+		for (Critter crit: critRemove) {	// kill all dead critters
 			population.remove(crit);
 		}
 		for (int i = 0; i < Params.refresh_algae_count; i++) {	// add algae to the world
@@ -413,6 +429,9 @@ public abstract class Critter {
 		critRemove.clear();
 	}
 	
+	/**
+	 * Display the positions of each critter in the world
+	 */
 	public static void displayWorld() {
 		String[][] grid = new String[Params.world_height + 2][Params.world_width + 2];
 		int i;
