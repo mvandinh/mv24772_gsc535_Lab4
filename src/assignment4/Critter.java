@@ -15,6 +15,9 @@ package assignment4;
 import java.lang.reflect.Constructor;
 import java.util.List;
 
+import assignment5.Critter;
+import assignment5.Params;
+
 /* see the PDF for descriptions of the methods and fields in this class
  * you may add fields, methods or inner classes to Critter ONLY if you make your additions private
  * no new public, protected or default-package code or data can be added to Critter
@@ -110,6 +113,77 @@ public abstract class Critter {
 				movement_flag = 2;
 			}
 		}
+	}
+	
+	/**
+	 * Looks in a certain direction to see if another Critter is occupying a spot
+	 * @param direction - eight directions in total (cardinal, ordinal)
+	 * @param steps - false (look 1 step away), true (look 2 steps away)
+	 * @return
+	 */
+	protected String look(int direction, boolean steps) {
+		energy -= Params.look_energy_cost;
+		int x_temp = x_coord_previous;
+		int y_temp = y_coord_previous;
+		if (movement_flag % 2 == 1) {	// the Critter is fighting
+			x_temp = x_coord;
+			y_temp = y_coord;
+		}
+		int x_look = x_temp;
+		int y_look = y_temp;
+		int peek = 1;	// 1 step away
+		if (steps) {	// 2 step away
+			peek = 2;
+		}
+		if (direction == 0) {
+			x_look = x_temp + peek;
+		}
+		else if(direction == 1) {
+			x_look = x_temp + peek;
+			y_look = y_temp - peek;
+		}
+		else if(direction == 2) {
+			y_look = y_temp - peek;
+		}
+		else if(direction == 3) {
+			x_look = x_temp - peek;
+			y_look = y_temp - peek;
+		}
+		else if(direction == 4) {
+			x_look = x_temp - peek;
+		}
+		else if(direction == 5) {
+			x_look = x_temp - peek;
+			y_look = y_temp + peek;
+		}
+		else if(direction == 6) {
+			y_look = y_temp + peek;
+		}
+		else {	// direction == 7
+			x_look = x_temp + peek;
+			y_look = y_temp + peek;
+		}
+		x_look = (((x_look % Params.world_width) + Params.world_width) % Params.world_width);
+		y_look = (((y_look % Params.world_height) + Params.world_height) % Params.world_height);
+		if (movement_flag % 2 == 1) {	// the Critter is fighting
+			for (Critter crit: population) {
+				if ((!this.equals(crit)) && (!critRemove.contains(crit))) {
+					if ((x_look == crit.x_coord) && (y_temp == crit.y_coord)) {	// if the space is occupied do not move
+						return crit.toString();
+					}
+				}
+			}
+		}
+		else {
+			for (Critter crit: population) {
+				if ((!this.equals(crit)) && (!critRemove.contains(crit))) {
+					if ((x_look == crit.x_coord_previous) && (y_temp == crit.y_coord_previous)) {	// if the space is occupied do not move
+						return crit.toString();
+					}
+				}
+			}
+		}
+		return null;
 	}
 	
 	/**

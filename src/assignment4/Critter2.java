@@ -14,7 +14,7 @@
 package assignment4;
 
 /*
- * Example critter
+ * Critter2 as energy decreases, chance of fighting and moving increases
  */
 public class Critter2 extends Critter {
 	

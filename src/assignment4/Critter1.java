@@ -14,7 +14,8 @@
 package assignment4;
 
 /*
- * Example critter
+ * Critter1 does not move except from a fight
+ * Critter1 has a 50/50 chance to fight during an encounter
  */
 public class Critter1 extends Critter {
 	

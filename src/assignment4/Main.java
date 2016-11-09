@@ -116,7 +116,7 @@ public class Main {
         					throw new InvalidCritterException(splitInput[1]);
         				}
             		}
-            		else if ((splitInput[0].equals("quit")) && (splitInput.length == 1)) {}	// quit - terminates the program
+            		else if ((splitInput[0].equals("quit")) && (splitInput.length == 1)) {}	// quit - terminate the program
             		else {
             			throw new Exception();	// if input is invalid, throw an exception
             		}
